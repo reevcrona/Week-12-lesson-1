@@ -7,6 +7,15 @@ const app = express();
 
 const port = 3000;
 
+const validateCityQuery = (req, res, next) => {
+  if (!req.query.city || req.query.city.length < 1) {
+    return res.status(400).json({
+      error: "Bad request, Please provide a city in the query parameter",
+    });
+  }
+  next();
+};
+
 app.get("/crimes", async (req, res) => {
   try {
     const response = await axios.get(
@@ -36,7 +45,7 @@ app.get("/crimes/locations", async (req, res) => {
   }
 });
 
-app.get("/crimes/search", async (req, res) => {
+app.get("/crimes/search", validateCityQuery, async (req, res) => {
   try {
     const city = req.query.city;
 
@@ -46,9 +55,18 @@ app.get("/crimes/search", async (req, res) => {
 
     const crimes = response.data.data;
 
+    if (crimes.length < 1) {
+      return res
+        .status(404)
+        .json({ error: `No crime data found for city: '${city}'` });
+    }
+
     res.status(200).json(crimes);
   } catch (error) {
-    console.error(error);
+    console.error(`Error fetching crime data ${error.message || error}`);
+    res.status(500).json({
+      error: "Internal server error. Could not fetch crime data.",
+    });
   }
 });
 
