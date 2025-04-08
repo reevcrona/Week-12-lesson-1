@@ -25,7 +25,10 @@ app.get("/crimes", async (req, res) => {
 
     res.status(200).json(crimes);
   } catch (error) {
-    console.error(error);
+    console.error(`Error fetching crime data ${error.message || error}`);
+    res.status(500).json({
+      error: "Internal server error. Could not fetch crime data.",
+    });
   }
 });
 
@@ -41,7 +44,10 @@ app.get("/crimes/locations", async (req, res) => {
 
     res.status(200).json(headlineData);
   } catch (error) {
-    console.error(error);
+    console.error(`Error fetching crime data ${error.message || error}`);
+    res.status(500).json({
+      error: "Internal server error. Could not fetch crime data.",
+    });
   }
 });
 
@@ -80,7 +86,10 @@ app.get("/crimes/latest", async (req, res) => {
 
     res.status(200).json(latestCrime);
   } catch (error) {
-    console.error(error);
+    console.error(`Error fetching crime data ${error.message || error}`);
+    res.status(500).json({
+      error: "Internal server error. Could not fetch crime data.",
+    });
   }
 });
 
