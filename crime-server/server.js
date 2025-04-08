@@ -2,10 +2,21 @@ import express from "express";
 import axios from "axios";
 import yaml from "js-yaml";
 import swaggerUi from "swagger-ui-express";
+import fs from "fs";
 
 const app = express();
 
 const port = 3000;
+
+try {
+  const swaggerDoc = yaml.load(fs.readFileSync("./swagger.yaml", "utf8"));
+
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
+
+  console.log("Swagger UI is up and running at /api-docs");
+} catch (error) {
+  console.error(`failed to read swagger.yaml file`, error);
+}
 
 const validateCityQuery = (req, res, next) => {
   if (!req.query.city || req.query.city.length < 1) {
